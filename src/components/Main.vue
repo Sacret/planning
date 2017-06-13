@@ -9,7 +9,7 @@
       </v-flex>
       <v-flex xs12 md4 offset-md4>
         <p v-if="user.uid && userName">
-        <v-card class="planning-card">
+          <v-card class="planning-card">
             <v-toolbar class="orange" light>
               <v-toolbar-title>Hi, {{ userName }}! Let's create new planning:</v-toolbar-title>
             </v-toolbar>
@@ -72,13 +72,16 @@ export default {
     message: 'Planning',
     user: {},
     name: '',
-    userName: localStorage.getItem('userName'),
   }),
+  computed: {
+    userName() {
+      return this.$store.state.userName;
+    },
+  },
   methods: {
     saveUserName() {
-      debugger;
-      localStorage.setItem('userName', this.name);
-      this.userName = this.name;
+      const userName = this.name.trim();
+      this.$store.commit('saveUserName', { userName });
     },
     createPlanning() {
 
