@@ -9,50 +9,10 @@
       </v-flex>
       <v-flex xs12 md4 offset-md4>
         <p v-if="user.uid && userName">
-          <v-card class="planning-card">
-            <v-toolbar class="orange" light>
-              <v-toolbar-title>Hi, {{ userName }}! Let's create new planning:</v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-              <v-text-field
-                v-model="title"
-                label="Planning title"
-                class="mt-5"
-                maxlength="50"
-                required
-              ></v-text-field>
-            </v-card-text>
-            <v-btn
-              light
-              class="orange btn-create"
-              @click.native="createPlanning"
-            >
-              Create planning
-            </v-btn>
-          </v-card>
+          <PlanningForm></PlanningForm>
         </p>
         <p v-else-if="user.uid && !userName">
-          <v-card class="user-card">
-            <v-toolbar class="orange" light>
-              <v-toolbar-title>Hello, friend! Tell us about you:</v-toolbar-title>
-            </v-toolbar>
-            <v-card-text>
-              <v-text-field
-                v-model="name"
-                label="Your name"
-                class="mt-5"
-                maxlength="50"
-                required
-              ></v-text-field>
-            </v-card-text>
-            <v-btn
-              light
-              class="orange btn-remember"
-              @click.native="saveUserName"
-            >
-              Remember me
-            </v-btn>
-          </v-card>
+          <LoginForm></LoginForm>
         </p>
         <p v-else>
           Oops! Something went wrong. Try later or reload the page.
@@ -64,27 +24,20 @@
 
 <script>
 import Firebase from 'firebase';
+import LoginForm from '@/components/LoginForm';
+import PlanningForm from '@/components/PlanningForm';
 import db from '../firebase';
 
 export default {
   name: 'main',
+  components: { LoginForm, PlanningForm },
   data: () => ({
     message: 'Planning',
     user: {},
-    name: '',
   }),
   computed: {
     userName() {
       return this.$store.state.userName;
-    },
-  },
-  methods: {
-    saveUserName() {
-      const userName = this.name.trim();
-      this.$store.commit('saveUserName', { userName });
-    },
-    createPlanning() {
-
     },
   },
   beforeCreate() {
@@ -105,13 +58,5 @@ export default {
 <style scoped>
 h1, h2 {
   font-weight: normal;
-}
-
-.user-card, .planning-card {
-  margin-top: 15px;
-}
-
-.btn-remember, .btn-create {
-  margin-bottom: 16px;
 }
 </style>
