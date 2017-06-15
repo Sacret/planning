@@ -13,8 +13,16 @@
       ></v-text-field>
       <v-select
         v-bind:items="min"
-        v-model="e1"
-        label="Select"
+        v-model="selectedMin"
+        label="Select min duration"
+        dark
+        single-line
+        auto
+      ></v-select>
+      <v-select
+        v-bind:items="max"
+        v-model="selectedMzx"
+        label="Select max duration"
         dark
         single-line
         auto

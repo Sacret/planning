@@ -1,11 +1,11 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <Header></Header>
-    <div class="app-content">
+    <main>
       <router-view></router-view>
-    </div>
+    </main>
     <Footer></Footer>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -30,7 +30,7 @@ export default {
   flex-direction: column;
 }
 
-.app-content {
+main {
   flex: 1;
 }
 </style>
