@@ -11,7 +11,14 @@
         maxlength="50"
         required
       ></v-text-field>
-      <v-btn-dropdown label="State" v-bind:options="min" max-height="auto"></v-btn-dropdown>
+      <v-select
+        v-bind:items="min"
+        v-model="e1"
+        label="Select"
+        dark
+        single-line
+        auto
+      ></v-select>
     </v-card-text>
     <v-btn
       light
