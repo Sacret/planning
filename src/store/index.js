@@ -7,6 +7,7 @@ Vue.use(Vuex);
 // each Vuex instance is just a single state tree.
 const state = {
   userName: localStorage.getItem('userName') || '',
+  uid: null,
 };
 
 // mutations are operations that actually mutates the state.
@@ -19,6 +20,9 @@ const mutations = {
   saveUserName(newState, { userName }) {
     localStorage.setItem('userName', userName);
     newState.userName = userName;
+  },
+  saveUserId(newState, { uid }) {
+    newState.uid = uid;
   },
 };
 

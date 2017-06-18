@@ -21,7 +21,7 @@
       ></v-select>
       <v-select
         v-bind:items="max"
-        v-model="selectedMzx"
+        v-model="selectedMax"
         label="Select max duration"
         dark
         single-line
@@ -39,12 +39,16 @@
 </template>
 
 <script>
+import db from '../firebase';
+
 export default {
   name: 'planning-form',
   data: () => ({
     title: '',
     min: ['10m', '20m', '30m', '40m', '50m', '1h'],
     max: ['2h', '4h', '6h', '8h', '10h', '12h'],
+    selectedMin: '10m',
+    selectedMax: '2h',
   }),
   computed: {
     userName() {
@@ -53,7 +57,17 @@ export default {
   },
   methods: {
     createPlanning() {
-
+      this.$firebaseRefs.plannings.push({
+        title: this.title,
+        selectedMin: this.selectedMin,
+        selectedMax: this.selectedMax,
+        uid: this.$store.state.uid,
+      });
+    },
+  },
+  firebase: {
+    plannings: {
+      source: db.ref('plannings'),
     },
   },
 };
