@@ -5,6 +5,7 @@
     </v-toolbar>
     <v-card-text>
       <v-text-field
+        v-if="!planningKey"
         v-model="title"
         label="Planning title"
         class="mt-5"
@@ -12,6 +13,7 @@
         required
       ></v-text-field>
       <v-select
+        v-if="!planningKey"
         v-bind:items="min"
         v-model="selectedMin"
         label="Select min duration"
@@ -20,6 +22,7 @@
         auto
       ></v-select>
       <v-select
+        v-if="!planningKey"
         v-bind:items="max"
         v-model="selectedMax"
         label="Select max duration"
@@ -27,14 +30,42 @@
         single-line
         auto
       ></v-select>
+      <v-btn
+        v-if="!planningKey"
+        light
+        class="orange btn-create"
+        @click.native="createPlanning"
+      >
+        Create planning
+      </v-btn>
+      <v-text-field
+        v-if="planningKey"
+        v-model="planningKey"
+        label="Generated link"
+        hint="Copy this link and share with your team to start time estimating"
+        persistent-hint
+        class="mt-5"
+        maxlength="50"
+        required
+      ></v-text-field>
+      <v-btn
+        v-if="planningKey"
+        light
+        class="orange btn-create"
+        @click.native="createPlanning"
+      >
+        Go to planning
+      </v-btn>
+      <span v-if="planningKey">or</span>
+      <v-btn
+        v-if="planningKey"
+        light
+        class="primary btn-create"
+        @click.native="resetPlanning"
+      >
+        Reset form data
+      </v-btn>
     </v-card-text>
-    <v-btn
-      light
-      class="orange btn-create"
-      @click.native="createPlanning"
-    >
-      Create planning
-    </v-btn>
   </v-card>
 </template>
 
@@ -49,6 +80,7 @@ export default {
     max: ['2h', '4h', '6h', '8h', '10h', '12h'],
     selectedMin: '10m',
     selectedMax: '2h',
+    planningKey: '',
   }),
   computed: {
     userName() {
@@ -57,12 +89,17 @@ export default {
   },
   methods: {
     createPlanning() {
-      this.$firebaseRefs.plannings.push({
+      const newPlanning = this.$firebaseRefs.plannings.push({
         title: this.title,
         selectedMin: this.selectedMin,
         selectedMax: this.selectedMax,
         uid: this.$store.state.uid,
       });
+      this.planningKey = newPlanning.getKey();
+    },
+    resetPlanning() {
+      this.$firebaseRefs.plannings.child(this.planningKey).remove();
+      this.planningKey = '';
     },
   },
   firebase: {
