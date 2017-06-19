@@ -52,7 +52,8 @@
         v-if="planningKey"
         light
         class="orange btn-create"
-        @click.native="createPlanning"
+        router
+        :to="'/plannings/' + planningKey"
       >
         Go to planning
       </v-btn>
