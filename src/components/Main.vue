@@ -46,6 +46,7 @@ export default {
       if (user) {
         this.user = user;
         // this.$bindAsArray('plannings', db.ref(`plannings/${user.uid}`));
+        debugger;
         this.$store.commit('saveUserId', { uid: user.uid });
       } else {
         Firebase.auth().signInAnonymously().catch(console.error);
