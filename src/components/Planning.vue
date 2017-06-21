@@ -2,7 +2,7 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12>
-        {{ planning.title }}
+        <h2>{{ planning.title }}</h2>
       </v-flex>
       <v-flex xs2>
           <User userName="Anastasia" uid="123"></User>
@@ -27,15 +27,11 @@ export default {
       title: '',
     },
   }),
-  // firebase: {
-  //   planning: {
-  //     source: db.ref('users'),
-  //     // Optional, allows you to handle any errors.
-  //     cancelCallback(err) {
-  //       console.error(err);
-  //     }
-  //   }
-  // }
+  computed: {
+    userName() {
+      return this.$store.state.userName;
+    },
+  },
   beforeCreate() {
     // Setup Firebase onAuthStateChanged handler
     Firebase.auth().onAuthStateChanged((user) => {
@@ -44,6 +40,16 @@ export default {
         const planningId = this.$route.params.id;
         if (planningId) {
           this.$bindAsObject('planning', db.ref(`plannings/${planningId}`));
+          this.$bindAsArray('users', db.ref(`plannings/${planningId}/users`));
+        }
+        const isUserInArray = this.users
+          .filter(filteredUser => filteredUser.uid === user.uid)
+          .length > 0;
+        if (this.userName && !isUserInArray) {
+          this.users.push({
+            uid: user.uid,
+            userName: this.userName,
+          });
         }
       } else {
         Firebase.auth().signInAnonymously().catch(console.error);

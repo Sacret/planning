@@ -95,6 +95,10 @@ export default {
         selectedMin: this.selectedMin,
         selectedMax: this.selectedMax,
         uid: this.$store.state.uid,
+        users: [{
+          uid: this.$store.state.uid,
+          userName: this.userName,
+        }],
       });
       this.planningKey = newPlanning.getKey();
     },

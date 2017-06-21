@@ -28,11 +28,6 @@ export default {
   data: () => ({
     name: '',
   }),
-  computed: {
-    userName() {
-      return this.$store.state.userName;
-    },
-  },
   methods: {
     saveUserName() {
       const userName = this.name.trim();
