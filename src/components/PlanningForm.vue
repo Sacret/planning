@@ -88,6 +88,11 @@ export default {
       return this.$store.state.userName;
     },
   },
+  firebase: {
+    plannings: {
+      source: db.ref('plannings'),
+    },
+  },
   methods: {
     createPlanning() {
       const newPlanning = this.$firebaseRefs.plannings.push({
@@ -105,11 +110,6 @@ export default {
     resetPlanning() {
       this.$firebaseRefs.plannings.child(this.planningKey).remove();
       this.planningKey = '';
-    },
-  },
-  firebase: {
-    plannings: {
-      source: db.ref('plannings'),
     },
   },
 };

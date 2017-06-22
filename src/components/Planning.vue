@@ -4,18 +4,18 @@
       <v-flex xs12>
         <h2>{{ planning.title }}</h2>
       </v-flex>
-      <v-flex xs2>
-          <User userName="Anastasia" uid="123"></User>
+      <template v-for="(user, key) in users">
+        <v-flex xs2 v-if="user.uid">
+          <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
         </v-flex>
-        <v-flex xs2>
-          <user userName="Nastia" uid="1243"></User>
-        </v-flex>
+      </template>
     </v-layout>
   </v-container>
 </template>
 
 <script>
 import Firebase from 'firebase';
+import _find from 'lodash/find';
 import User from '@/components/User';
 import db from '../firebase';
 
@@ -26,10 +26,15 @@ export default {
     planning: {
       title: '',
     },
+    users: [],
+    isOwner: false,
   }),
   computed: {
     userName() {
       return this.$store.state.userName;
+    },
+    uid() {
+      return this.$store.state.uid;
     },
   },
   beforeCreate() {
@@ -39,16 +44,17 @@ export default {
         this.$store.commit('saveUserId', { uid: user.uid });
         const planningId = this.$route.params.id;
         if (planningId) {
-          this.$bindAsObject('planning', db.ref(`plannings/${planningId}`));
-          this.$bindAsArray('users', db.ref(`plannings/${planningId}/users`));
-        }
-        const isUserInArray = this.users
-          .filter(filteredUser => filteredUser.uid === user.uid)
-          .length > 0;
-        if (this.userName && !isUserInArray) {
-          this.users.push({
-            uid: user.uid,
-            userName: this.userName,
+          this.$bindAsObject('planning', db.ref(`plannings/${planningId}`), null, () => {
+            this.isOwner = this.uid === this.planning.uid;
+          });
+          this.$bindAsObject('users', db.ref(`plannings/${planningId}/users`), null, () => {
+            const isUserInArray = _find(this.users, { uid: this.uid });
+            if (this.userName && !isUserInArray) {
+              this.$firebaseRefs.users.push({
+                uid: this.uid,
+                userName: this.userName,
+              });
+            }
           });
         }
       } else {
