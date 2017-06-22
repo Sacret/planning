@@ -100,12 +100,12 @@ export default {
         selectedMin: this.selectedMin,
         selectedMax: this.selectedMax,
         uid: this.$store.state.uid,
-        users: [{
-          uid: this.$store.state.uid,
-          userName: this.userName,
-        }],
       });
       this.planningKey = newPlanning.getKey();
+      this.$firebaseRefs.plannings.child(this.planningKey).child('users').push({
+        uid: this.$store.state.uid,
+        userName: this.userName,
+      });
     },
     resetPlanning() {
       this.$firebaseRefs.plannings.child(this.planningKey).remove();
