@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Main from '@/components/Main';
-import Planning from '@/components/Planning';
+import Main from '@/pages/Main';
+import Planning from '@/pages/Planning';
 
 Vue.use(Router);
 
