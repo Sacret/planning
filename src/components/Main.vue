@@ -26,7 +26,6 @@
 import Firebase from 'firebase';
 import LoginForm from '@/components/LoginForm';
 import PlanningForm from '@/components/PlanningForm';
-// import db from '../firebase';
 
 export default {
   name: 'main',
@@ -45,8 +44,6 @@ export default {
     Firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.user = user;
-        // this.$bindAsArray('plannings', db.ref(`plannings/${user.uid}`));
-        debugger;
         this.$store.commit('saveUserId', { uid: user.uid });
       } else {
         Firebase.auth().signInAnonymously().catch(console.error);
