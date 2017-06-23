@@ -4,12 +4,15 @@
       <v-flex xs12>
         <h2>{{ planning.title }}</h2>
       </v-flex>
-      <template v-for="(user, key) in users" v-if="uid && userName">
-        <v-flex xs2 v-if="user.uid">
-          <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
-        </v-flex>
+      <template v-if="uid && userName">
+        <template v-for="(user, key) in users">
+          <v-flex xs2 v-if="user.uid">
+            <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
+          </v-flex>
+        </template>
+        <TaskForm></TaskForm>
       </template>
-      <template v-if="!uid || !userName">
+      <template v-else>
         <v-flex xs12 justify-center>If you want to join this planning please log in!</v-flex>
         <v-flex xs12 md4 offset-md4>
           <LoginForm></LoginForm>
@@ -24,11 +27,12 @@ import Firebase from 'firebase';
 import _find from 'lodash/find';
 import User from '@/components/User';
 import LoginForm from '@/components/LoginForm';
+import TaskForm from '@/components/TaskForm';
 import db from '../firebase';
 
 export default {
   name: 'planning',
-  components: { User, LoginForm },
+  components: { User, LoginForm, TaskForm },
   data: () => ({
     planning: {
       title: '',
@@ -75,7 +79,6 @@ export default {
   },
   methods: {
     checkUid() {
-      debugger;
       if (this.isUsersArrayBinded) {
         const isUserInArray = _find(this.users, { uid: this.uid });
         if (this.userName && !isUserInArray) {
