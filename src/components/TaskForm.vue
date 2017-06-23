@@ -34,17 +34,23 @@
           End estimation
         </v-btn>
       </v-flex>
+      <v-flex xs12>
+        <TaskStepper :currentTaskState="currentTaskState"></TaskStepper>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import TaskStepper from '@/components/TaskStepper';
+
 const START_DISCUSSION = 0;
 const START_ESTIMATION = 1;
 const END_ESTIMATION = 2;
 
 export default {
   name: 'task-from',
+  components: { TaskStepper },
   data: () => ({
     taskStates: {
       START_DISCUSSION,
