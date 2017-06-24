@@ -40,13 +40,14 @@
       </v-btn>
       <v-text-field
         v-if="planningKey"
-        v-model="planningKey"
+        :value="planningLink"
         label="Generated link"
         hint="Copy this link and share with your team to start time estimating"
         persistent-hint
         class="mt-5"
         maxlength="50"
-        required
+        autofocus
+        readonly
       ></v-text-field>
       <v-btn
         v-if="planningKey"
@@ -77,7 +78,7 @@ export default {
   name: 'planning-form',
   data: () => ({
     title: '',
-    min: ['10m', '20m', '30m', '40m', '50m', '1h'],
+    min: ['10m', '20m', '30m'],
     max: ['2h', '4h', '6h', '8h', '10h', '12h'],
     selectedMin: '10m',
     selectedMax: '2h',
@@ -86,6 +87,9 @@ export default {
   computed: {
     userName() {
       return this.$store.state.userName;
+    },
+    planningLink() {
+      return `${window.location.href}plannings/${this.planningKey}`;
     },
   },
   firebase: {
@@ -122,6 +126,6 @@ export default {
 }
 
 .btn-create {
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 </style>
