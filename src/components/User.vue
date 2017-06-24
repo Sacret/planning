@@ -61,6 +61,7 @@ export default {
 <style scoped>
 .userBlock {
   width: 150px;
+  margin-bottom: 15px;
 }
 
 .removeButton {

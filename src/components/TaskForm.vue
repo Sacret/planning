@@ -1,41 +1,44 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <v-flex xs10>
+      <v-flex xs10 v-if="isOwner">
         <v-text-field
-          name="input-1"
+          v-model="taskDescription"
           label="Task description"
+          :readonly="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           multi-line
         ></v-text-field>
       </v-flex>
-      <v-flex xs2>
+      <v-flex xs2 v-if="isOwner">
         <v-btn
-          :light="currentTaskState == taskStates.START_DISCUSSION"
+          :light="currentTaskStatus == taskStatuses.START_DISCUSSION"
           class="orange taskButton"
-          :disabled="currentTaskState !== taskStates.START_DISCUSSION"
+          :disabled="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           @click.native="startDiscussion"
         >
           Start discussion
         </v-btn>
         <v-btn
-          :light="currentTaskState == taskStates.START_ESTIMATION"
+          :light="currentTaskStatus == taskStatuses.START_ESTIMATION"
           class="orange taskButton"
-          :disabled="currentTaskState !== taskStates.START_ESTIMATION"
+          :disabled="currentTaskStatus !== taskStatuses.START_ESTIMATION"
           @click.native="startEstimation"
         >
           Start estimation
         </v-btn>
         <v-btn
-          :light="currentTaskState == taskStates.END_ESTIMATION"
+          :light="currentTaskStatus == taskStatuses.END_ESTIMATION"
           class="orange taskButton"
-          :disabled="currentTaskState !== taskStates.END_ESTIMATION"
+          :disabled="currentTaskStatus !== taskStatuses.END_ESTIMATION"
           @click.native="endEstimation"
         >
           End estimation
         </v-btn>
       </v-flex>
-      <v-flex xs12>
-        <TaskStepper :currentTaskState="currentTaskState"></TaskStepper>
+      <v-flex xs12 v-if="isOwner">
+        <v-alert error class="taskFormAlert" :value="isTaskIncorrect">
+          Task description cannot be blank.
+        </v-alert>
       </v-flex>
     </v-layout>
   </v-container>
@@ -43,28 +46,69 @@
 
 <script>
 import TaskStepper from '@/components/TaskStepper';
+import db from '../firebase';
 
-const START_DISCUSSION = 0;
-const START_ESTIMATION = 1;
-const END_ESTIMATION = 2;
+const START_DISCUSSION = 1;
+const START_ESTIMATION = 2;
+const END_ESTIMATION = 3;
 
 export default {
   name: 'task-from',
+  props: ['isOwner'],
   components: { TaskStepper },
   data: () => ({
-    taskStates: {
+    taskStatuses: {
       START_DISCUSSION,
       START_ESTIMATION,
       END_ESTIMATION,
     },
-    currentTaskState: START_DISCUSSION,
+    isTaskIncorrect: false,
+    taskKey: '',
   }),
+  computed: {
+    currentTaskStatus() {
+      debugger;
+      return this.tasks && this.tasks[0]
+        ? this.tasks[0].status
+        : START_DISCUSSION;
+    },
+    taskDescription() {
+      return this.tasks && this.tasks[0]
+        ? this.tasks[0].description
+        : '';
+    },
+  },
+  beforeCreate() {
+    const planningId = this.$route.params.id;
+    if (planningId) {
+      // this.$bindAsObject('planning', db.ref(`plannings/${planningId}`));
+      this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1), null, () => {
+        if (this.tasks && this.tasks[0] && this.tasks[0]['.key']) {
+          this.taskKey = this.tasks[0]['.key'];
+        }
+      });
+    }
+  },
   methods: {
     startDiscussion() {
-      this.currentTaskState = this.taskStates.START_ESTIMATION;
+      if (this.taskDescription.trim().length) {
+        debugger;
+        const newTask = this.$firebaseRefs.tasks.push({
+          description: this.taskDescription.trim(),
+          status: START_ESTIMATION,
+        });
+        this.taskKey = newTask.getKey();
+        this.isTaskIncorrect = false;
+      } else {
+        this.isTaskIncorrect = true;
+      }
     },
     startEstimation() {
-      this.currentTaskState = this.taskStates.END_ESTIMATION;
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(END_ESTIMATION);
+    },
+    endEstimation() {
+      this.taskDescription = '';
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(START_DISCUSSION);
     },
   },
 };
@@ -74,5 +118,10 @@ export default {
 <style scoped>
 .taskButton {
   width: 100%;
+}
+
+.taskFormAlert {
+  width: 100%;
+  margin-bottom: 15px;
 }
 </style>

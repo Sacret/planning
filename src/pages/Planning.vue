@@ -1,16 +1,13 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <v-flex xs12>
-        <h2>{{ planning.title }}</h2>
-      </v-flex>
       <template v-if="uid && userName">
         <template v-for="(user, key) in users">
           <v-flex xs2 v-if="user.uid">
             <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
           </v-flex>
         </template>
-        <TaskForm></TaskForm>
+        <TaskForm :isOwner="isOwner"></TaskForm>
       </template>
       <template v-else>
         <v-flex xs12 justify-center>If you want to join this planning please log in!</v-flex>
@@ -34,9 +31,7 @@ export default {
   name: 'planning',
   components: { User, LoginForm, TaskForm },
   data: () => ({
-    planning: {
-      title: '',
-    },
+    planning: {},
     users: [],
     isOwner: false,
     dialog: true,
@@ -70,6 +65,7 @@ export default {
     if (planningId) {
       this.$bindAsObject('planning', db.ref(`plannings/${planningId}`), null, () => {
         this.checkOwner();
+        this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
       });
       this.$bindAsObject('users', db.ref(`plannings/${planningId}/users`), null, () => {
         this.isUsersArrayBinded = true;

@@ -8,6 +8,7 @@ Vue.use(Vuex);
 const state = {
   userName: localStorage.getItem('userName') || '',
   uid: null,
+  planningTitle: '',
 };
 
 // mutations are operations that actually mutates the state.
@@ -23,6 +24,9 @@ const mutations = {
   },
   saveUserId(newState, { uid }) {
     newState.uid = uid;
+  },
+  savePlanningTitle(newState, { planningTitle }) {
+    newState.planningTitle = planningTitle;
   },
 };
 

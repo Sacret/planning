@@ -1,6 +1,6 @@
 <template>
   <v-toolbar class="orange" light>
-    <v-toolbar-title></v-toolbar-title>
+    <v-toolbar-title class="text-xs-left">{{ planningTitle }}</v-toolbar-title>
     <v-toolbar-items>
       <v-btn icon light>
         <v-icon>share</v-icon>
@@ -31,6 +31,9 @@ export default {
   computed: {
     userName() {
       return this.$store.state.userName;
+    },
+    planningTitle() {
+      return this.$store.state.planningTitle;
     },
   },
 };
