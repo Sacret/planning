@@ -8,6 +8,7 @@
           </v-flex>
         </template>
         <TaskForm :isOwner="isOwner"></TaskForm>
+        <TaskStepper></TaskStepper>
       </template>
       <template v-else>
         <v-flex xs12 justify-center>If you want to join this planning please log in!</v-flex>
@@ -25,11 +26,12 @@ import _find from 'lodash/find';
 import User from '@/components/User';
 import LoginForm from '@/components/LoginForm';
 import TaskForm from '@/components/TaskForm';
+import TaskStepper from '@/components/TaskStepper';
 import db from '../firebase';
 
 export default {
   name: 'planning',
-  components: { User, LoginForm, TaskForm },
+  components: { User, LoginForm, TaskForm, TaskStepper },
   data: () => ({
     planning: {},
     users: [],
@@ -93,10 +95,3 @@ export default {
   },
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-</style>

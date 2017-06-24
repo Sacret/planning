@@ -1,35 +1,36 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <v-flex xs10 v-if="isOwner">
+      <v-flex xs10>
         <v-text-field
+          v-if="isOwner && currentTaskStatus == taskStatuses.INITIAL_STATUS"
           v-model="taskDescription"
           label="Task description"
-          :readonly="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           multi-line
         ></v-text-field>
+        <h4 class="text-xs-left" v-else>{{ currentTaskDescription }}</h4>
       </v-flex>
       <v-flex xs2 v-if="isOwner">
         <v-btn
-          :light="currentTaskStatus == taskStatuses.START_DISCUSSION"
+          :light="currentTaskStatus == taskStatuses.INITIAL_STATUS"
           class="orange taskButton"
-          :disabled="currentTaskStatus !== taskStatuses.START_DISCUSSION"
+          :disabled="currentTaskStatus !== taskStatuses.INITIAL_STATUS"
           @click.native="startDiscussion"
         >
           Start discussion
         </v-btn>
         <v-btn
-          :light="currentTaskStatus == taskStatuses.START_ESTIMATION"
+          :light="currentTaskStatus == taskStatuses.START_DISCUSSION"
           class="orange taskButton"
-          :disabled="currentTaskStatus !== taskStatuses.START_ESTIMATION"
+          :disabled="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           @click.native="startEstimation"
         >
           Start estimation
         </v-btn>
         <v-btn
-          :light="currentTaskStatus == taskStatuses.END_ESTIMATION"
+          :light="currentTaskStatus == taskStatuses.START_ESTIMATION"
           class="orange taskButton"
-          :disabled="currentTaskStatus !== taskStatuses.END_ESTIMATION"
+          :disabled="currentTaskStatus !== taskStatuses.START_ESTIMATION"
           @click.native="endEstimation"
         >
           End estimation
@@ -45,9 +46,10 @@
 </template>
 
 <script>
-import TaskStepper from '@/components/TaskStepper';
+import _get from 'lodash/get';
 import db from '../firebase';
 
+const INITIAL_STATUS = 0;
 const START_DISCUSSION = 1;
 const START_ESTIMATION = 2;
 const END_ESTIMATION = 3;
@@ -55,60 +57,52 @@ const END_ESTIMATION = 3;
 export default {
   name: 'task-from',
   props: ['isOwner'],
-  components: { TaskStepper },
   data: () => ({
     taskStatuses: {
+      INITIAL_STATUS,
       START_DISCUSSION,
       START_ESTIMATION,
       END_ESTIMATION,
     },
     isTaskIncorrect: false,
     taskKey: '',
+    taskDescription: '',
   }),
   computed: {
     currentTaskStatus() {
-      debugger;
-      return this.tasks && this.tasks[0]
-        ? this.tasks[0].status
-        : START_DISCUSSION;
+      const status = _get(this, 'tasks[0].status', INITIAL_STATUS);
+      return status === END_ESTIMATION ? INITIAL_STATUS : status;
     },
-    taskDescription() {
-      return this.tasks && this.tasks[0]
-        ? this.tasks[0].description
-        : '';
+    currentTaskDescription() {
+      const description = _get(this, 'tasks[0].description', '');
+      return this.currentTaskStatus === INITIAL_STATUS ? '' : description;
     },
   },
   beforeCreate() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      // this.$bindAsObject('planning', db.ref(`plannings/${planningId}`));
       this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1), null, () => {
-        if (this.tasks && this.tasks[0] && this.tasks[0]['.key']) {
-          this.taskKey = this.tasks[0]['.key'];
-        }
+        this.taskKey = _get(this.tasks, ['0', '.key'], '');
       });
     }
   },
   methods: {
     startDiscussion() {
-      if (this.taskDescription.trim().length) {
-        debugger;
+      this.isTaskIncorrect = !this.taskDescription.trim().length;
+      if (!this.isTaskIncorrect) {
         const newTask = this.$firebaseRefs.tasks.push({
           description: this.taskDescription.trim(),
-          status: START_ESTIMATION,
+          status: START_DISCUSSION,
         });
         this.taskKey = newTask.getKey();
-        this.isTaskIncorrect = false;
-      } else {
-        this.isTaskIncorrect = true;
       }
     },
     startEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(END_ESTIMATION);
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(START_ESTIMATION);
     },
     endEstimation() {
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(END_ESTIMATION);
       this.taskDescription = '';
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(START_DISCUSSION);
     },
   },
 };
