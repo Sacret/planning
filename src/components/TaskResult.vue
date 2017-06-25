@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <h6>Estimation for "{{ $store.state.planningTitle }}"</h6>
+  <v-container v-if="currentTaskStatus === taskStatuses.END_ESTIMATION">
+    <h6>Estimation for "{{ description }}"</h6>
     <v-layout row wrap>
       <v-flex xs12>
         <v-data-table
@@ -31,28 +31,24 @@ import _forEach from 'lodash/forEach';
 import _reduce from 'lodash/reduce';
 import _sortBy from 'lodash/sortBy';
 import db from '../firebase';
-
-const INITIAL_STATUS = 0;
-const START_DISCUSSION = 1;
-const START_ESTIMATION = 2;
-const END_ESTIMATION = 3;
+import taskStatuses from '../constants/taskStatuses';
 
 export default {
   name: 'task-result',
   data: () => ({
-    taskStatuses: {
-      INITIAL_STATUS,
-      START_DISCUSSION,
-      START_ESTIMATION,
-      END_ESTIMATION,
-    },
+    taskStatuses,
     headers: [],
     items: [],
+    description: '',
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', INITIAL_STATUS);
+      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
       return status;
+    },
+    currentTaskDescription() {
+      const description = _get(this, 'tasks[0].description', '');
+      return description;
     },
   },
   beforeCreate() {

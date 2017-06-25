@@ -42,22 +42,13 @@
 import _get from 'lodash/get';
 import _some from 'lodash/some';
 import db from '../firebase';
-
-const INITIAL_STATUS = 0;
-const START_DISCUSSION = 1;
-const START_ESTIMATION = 2;
-const END_ESTIMATION = 3;
+import taskStatuses from '../constants/taskStatuses';
 
 export default {
   name: 'estimation-block',
   props: ['userName', 'uid'],
   data: () => ({
-    taskStatuses: {
-      INITIAL_STATUS,
-      START_DISCUSSION,
-      START_ESTIMATION,
-      END_ESTIMATION,
-    },
+    taskStatuses,
     selectedHour: '',
     selectedMin: '',
     hours: ['0h', '1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '10h', '12h', '14h'],
@@ -65,24 +56,24 @@ export default {
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', INITIAL_STATUS);
-      return status === END_ESTIMATION ? INITIAL_STATUS : status;
+      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     currentUid() {
       return this.$store.state.uid;
     },
     isCurrentUserEstimating() {
       return this.currentUid === this.uid
-        && this.currentTaskStatus === this.taskStatuses.START_ESTIMATION;
+        && this.currentTaskStatus === taskStatuses.START_ESTIMATION;
     },
     isUserEstimating() {
       return this.currentUid !== this.uid
-        && this.currentTaskStatus === this.taskStatuses.START_ESTIMATION;
+        && this.currentTaskStatus === taskStatuses.START_ESTIMATION;
     },
     isUserEstimated() {
       const estimations = _get(this.tasks, ['0', 'estimations'], []);
       const estimated = _some(estimations, { uid: this.uid });
-      return estimated && this.currentTaskStatus === this.taskStatuses.START_ESTIMATION;
+      return estimated && this.currentTaskStatus === taskStatuses.START_ESTIMATION;
     },
     time() {
       const hour = this.selectedHour ? parseInt(this.selectedHour, 10) : 0;
@@ -100,7 +91,6 @@ export default {
   },
   methods: {
     setEstimation() {
-      debugger;
       this.$firebaseRefs.tasks.child(this.taskKey).child('estimations').push({
         uid: this.uid,
         userName: this.userName,

@@ -19,26 +19,17 @@
 <script>
 import _get from 'lodash/get';
 import db from '../firebase';
-
-const INITIAL_STATUS = 0;
-const START_DISCUSSION = 1;
-const START_ESTIMATION = 2;
-const END_ESTIMATION = 3;
+import taskStatuses from '../constants/taskStatuses';
 
 export default {
   name: 'task-stepper',
   data: () => ({
-    taskStatuses: {
-      INITIAL_STATUS,
-      START_DISCUSSION,
-      START_ESTIMATION,
-      END_ESTIMATION,
-    },
+    taskStatuses,
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', INITIAL_STATUS);
-      return status === END_ESTIMATION ? INITIAL_STATUS : status;
+      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
   },
   beforeCreate() {

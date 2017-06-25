@@ -48,33 +48,24 @@
 <script>
 import _get from 'lodash/get';
 import db from '../firebase';
-
-const INITIAL_STATUS = 0;
-const START_DISCUSSION = 1;
-const START_ESTIMATION = 2;
-const END_ESTIMATION = 3;
+import taskStatuses from '../constants/taskStatuses';
 
 export default {
   name: 'task-from',
   props: ['isOwner'],
   data: () => ({
-    taskStatuses: {
-      INITIAL_STATUS,
-      START_DISCUSSION,
-      START_ESTIMATION,
-      END_ESTIMATION,
-    },
+    taskStatuses,
     isTaskIncorrect: false,
     taskDescription: '',
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', INITIAL_STATUS);
-      return status === END_ESTIMATION ? INITIAL_STATUS : status;
+      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     currentTaskDescription() {
       const description = _get(this, 'tasks[0].description', '');
-      return this.currentTaskStatus === INITIAL_STATUS ? '' : description;
+      return this.currentTaskStatus === taskStatuses.INITIAL_STATUS ? '' : description;
     },
   },
   beforeCreate() {
@@ -91,16 +82,16 @@ export default {
       if (!this.isTaskIncorrect) {
         const newTask = this.$firebaseRefs.tasks.push({
           description: this.taskDescription.trim(),
-          status: START_DISCUSSION,
+          status: taskStatuses.START_DISCUSSION,
         });
         this.taskKey = newTask.getKey();
       }
     },
     startEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(START_ESTIMATION);
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(taskStatuses.START_ESTIMATION);
     },
     endEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(END_ESTIMATION);
+      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(taskStatuses.END_ESTIMATION);
       this.taskDescription = '';
     },
   },
