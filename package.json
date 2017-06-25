@@ -15,6 +15,7 @@
     "lodash": "^4.17.4",
     "vue": "^2.3.3",
     "vue-router": "^2.3.1",
+    "vue-social-sharing": "^2.2.3",
     "vuefire": "^1.4.3",
     "vuex": "^2.3.1"
   },
