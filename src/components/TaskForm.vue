@@ -13,7 +13,7 @@
       <v-flex xs2 v-if="isOwner">
         <v-btn
           :light="currentTaskStatus == taskStatuses.INITIAL_STATUS"
-          class="orange taskButton"
+          class="orange task-button"
           :disabled="currentTaskStatus !== taskStatuses.INITIAL_STATUS"
           @click.native="startDiscussion"
         >
@@ -21,7 +21,7 @@
         </v-btn>
         <v-btn
           :light="currentTaskStatus == taskStatuses.START_DISCUSSION"
-          class="orange taskButton"
+          class="orange task-button"
           :disabled="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           @click.native="startEstimation"
         >
@@ -29,7 +29,7 @@
         </v-btn>
         <v-btn
           :light="currentTaskStatus == taskStatuses.START_ESTIMATION"
-          class="orange taskButton"
+          class="orange task-button"
           :disabled="currentTaskStatus !== taskStatuses.START_ESTIMATION"
           @click.native="endEstimation"
         >
@@ -37,7 +37,7 @@
         </v-btn>
       </v-flex>
       <v-flex xs12 v-if="isOwner">
-        <v-alert error class="taskFormAlert" :value="isTaskIncorrect">
+        <v-alert error class="task-form-alert" :value="isTaskIncorrect">
           Task description cannot be blank.
         </v-alert>
       </v-flex>
@@ -65,7 +65,6 @@ export default {
       END_ESTIMATION,
     },
     isTaskIncorrect: false,
-    taskKey: '',
     taskDescription: '',
   }),
   computed: {
@@ -110,11 +109,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.taskButton {
+.task-button {
   width: 100%;
 }
 
-.taskFormAlert {
+.task-form-alert {
   width: 100%;
   margin-bottom: 15px;
 }

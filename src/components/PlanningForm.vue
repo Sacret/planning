@@ -12,24 +12,6 @@
         maxlength="50"
         required
       ></v-text-field>
-      <v-select
-        v-if="!planningKey"
-        v-bind:items="min"
-        v-model="selectedMin"
-        label="Select min duration"
-        dark
-        single-line
-        auto
-      ></v-select>
-      <v-select
-        v-if="!planningKey"
-        v-bind:items="max"
-        v-model="selectedMax"
-        label="Select max duration"
-        dark
-        single-line
-        auto
-      ></v-select>
       <v-btn
         v-if="!planningKey"
         light
@@ -78,10 +60,6 @@ export default {
   name: 'planning-form',
   data: () => ({
     title: '',
-    min: ['10m', '20m', '30m'],
-    max: ['2h', '4h', '6h', '8h', '10h', '12h'],
-    selectedMin: '10m',
-    selectedMax: '2h',
     planningKey: '',
   }),
   computed: {
@@ -101,8 +79,6 @@ export default {
     createPlanning() {
       const newPlanning = this.$firebaseRefs.plannings.push({
         title: this.title,
-        selectedMin: this.selectedMin,
-        selectedMax: this.selectedMax,
         uid: this.$store.state.uid,
       });
       this.planningKey = newPlanning.getKey();

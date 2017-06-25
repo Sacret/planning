@@ -1,14 +1,14 @@
 <template>
-  <v-card class="userBlock">
+  <v-card class="user-block">
     <v-card-row
       :img="'https://api.adorable.io/avatars/150/' + uid + '.png'"
       height="150px"
-      class="userRow"
+      class="user-row"
     >
       <v-btn
         icon
         light
-        class="orange removeButton"
+        class="orange remove-button"
         v-if="hasRemoveIcon"
         @click.native="removeUser"
       >
@@ -59,22 +59,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.userBlock {
+.user-block {
   width: 150px;
-  margin-bottom: 15px;
+  margin: auto;
 }
 
-.removeButton {
+.remove-button {
   display: none;
 }
 
-.userRow {
+.user-row {
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
 }
 
-.userRow:hover .removeButton {
+.user-row:hover .remove-button {
   display: block;
 }
 </style>

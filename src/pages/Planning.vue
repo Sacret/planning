@@ -5,6 +5,7 @@
         <template v-for="(user, key) in users">
           <v-flex xs2 v-if="user.uid">
             <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
+            <EstimationBlock :userName="user.userName" :uid="user.uid"></EstimationBlock>
           </v-flex>
         </template>
         <TaskForm :isOwner="isOwner"></TaskForm>
@@ -24,6 +25,7 @@
 import Firebase from 'firebase';
 import _find from 'lodash/find';
 import User from '@/components/User';
+import EstimationBlock from '@/components/EstimationBlock';
 import LoginForm from '@/components/LoginForm';
 import TaskForm from '@/components/TaskForm';
 import TaskStepper from '@/components/TaskStepper';
@@ -31,7 +33,7 @@ import db from '../firebase';
 
 export default {
   name: 'planning',
-  components: { User, LoginForm, TaskForm, TaskStepper },
+  components: { User, EstimationBlock, LoginForm, TaskForm, TaskStepper },
   data: () => ({
     planning: {},
     users: [],
@@ -49,7 +51,6 @@ export default {
   },
   watch: {
     userName() {
-      debugger;
       this.checkOwner();
       this.checkUid();
     },

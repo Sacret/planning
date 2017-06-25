@@ -26,9 +26,9 @@
         <a
           href="https://github.com/Sacret/planning"
           target="_blank"
-          light
+          class="star-icon"
         >
-          <v-icon>star</v-icon>
+          <v-icon light>star</v-icon>
         </a>
       </v-toolbar-item>
       <v-toolbar-item ripple v-if="userName">{{ userName }}</v-toolbar-item>
@@ -65,3 +65,10 @@ export default {
   },
 };
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.star-icon {
+  text-decoration: none;
+}
+</style>
