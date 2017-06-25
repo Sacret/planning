@@ -8,6 +8,7 @@
             <EstimationBlock :userName="user.userName" :uid="user.uid"></EstimationBlock>
           </v-flex>
         </template>
+        <TaskResult></TaskResult>
         <TaskForm :isOwner="isOwner"></TaskForm>
         <TaskStepper></TaskStepper>
       </template>
@@ -27,13 +28,14 @@ import _find from 'lodash/find';
 import User from '@/components/User';
 import EstimationBlock from '@/components/EstimationBlock';
 import LoginForm from '@/components/LoginForm';
+import TaskResult from '@/components/TaskResult';
 import TaskForm from '@/components/TaskForm';
 import TaskStepper from '@/components/TaskStepper';
 import db from '../firebase';
 
 export default {
   name: 'planning',
-  components: { User, EstimationBlock, LoginForm, TaskForm, TaskStepper },
+  components: { User, EstimationBlock, LoginForm, TaskResult, TaskForm, TaskStepper },
   data: () => ({
     planning: {},
     users: [],

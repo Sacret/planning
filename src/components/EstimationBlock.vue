@@ -84,7 +84,7 @@ export default {
       const estimated = _some(estimations, { uid: this.uid });
       return estimated && this.currentTaskStatus === this.taskStatuses.START_ESTIMATION;
     },
-    estimation() {
+    time() {
       const hour = this.selectedHour ? parseInt(this.selectedHour, 10) : 0;
       const min = this.selectedMin ? parseInt(this.selectedMin, 10) : 0;
       return (hour * 60) + min;
@@ -103,7 +103,8 @@ export default {
       debugger;
       this.$firebaseRefs.tasks.child(this.taskKey).child('estimations').push({
         uid: this.uid,
-        estimation: this.estimation,
+        userName: this.userName,
+        time: this.time,
       });
     },
   },
