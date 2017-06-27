@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <template v-if="uid && userName">
+      <template v-if="uid && userName && users">
         <template v-for="(user, key) in users">
           <v-flex xs2 v-if="user.uid">
             <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
@@ -37,11 +37,7 @@ export default {
   name: 'planning',
   components: { User, EstimationBlock, LoginForm, TaskResult, TaskForm, TaskStepper },
   data: () => ({
-    planning: {},
-    users: [],
     isOwner: false,
-    dialog: true,
-    isUsersArrayBinded: false,
   }),
   computed: {
     userName() {
@@ -53,8 +49,18 @@ export default {
   },
   watch: {
     userName() {
-      this.checkOwner();
       this.checkUid();
+    },
+  },
+  methods: {
+    checkUid() {
+      const isUserInArray = _find(this.users, { uid: this.uid });
+      if (this.userName && !isUserInArray) {
+        this.$firebaseRefs.users.push({
+          uid: this.uid,
+          userName: this.userName,
+        });
+      }
     },
   },
   beforeCreate() {
@@ -62,39 +68,20 @@ export default {
     Firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.$store.commit('saveUserId', { uid: user.uid });
+        const planningId = this.$route.params.id;
+        if (planningId) {
+          this.$bindAsObject('planning', db.ref(`plannings/${planningId}`), null, () => {
+            this.isOwner = user.uid === this.planning.uid;
+            this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
+          });
+          this.$bindAsObject('users', db.ref(`plannings/${planningId}/users`), null, () => {
+            this.checkUid();
+          });
+        }
       } else {
         Firebase.auth().signInAnonymously().catch(console.error);
       }
     });
-    const planningId = this.$route.params.id;
-    if (planningId) {
-      this.$bindAsObject('planning', db.ref(`plannings/${planningId}`), null, () => {
-        this.checkOwner();
-        this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
-      });
-      this.$bindAsObject('users', db.ref(`plannings/${planningId}/users`), null, () => {
-        this.isUsersArrayBinded = true;
-        this.checkUid();
-      });
-    }
-  },
-  methods: {
-    checkUid() {
-      if (this.isUsersArrayBinded) {
-        const isUserInArray = _find(this.users, { uid: this.uid });
-        if (this.userName && !isUserInArray) {
-          this.$firebaseRefs.users.push({
-            uid: this.uid,
-            userName: this.userName,
-          });
-        }
-      }
-    },
-    checkOwner() {
-      if (this.uid) {
-        this.isOwner = this.uid === this.planning.uid;
-      }
-    },
   },
 };
 </script>
