@@ -1,9 +1,15 @@
 <template>
   <v-card class="user-card">
     <v-toolbar class="grey darken-3" light>
-      <v-toolbar-title>Hello, friend!</v-toolbar-title>
+      <v-toolbar-title>Hello, friend! Tell us about you:</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
+      <v-text-field
+        v-model="name"
+        label="Your name"
+        maxlength="50"
+        required
+      ></v-text-field>
       <v-text-field
         v-model="email"
         label="E-mail"
@@ -14,13 +20,14 @@
         v-model="password"
         label="Password"
         maxlength="50"
+        type="password"
         required
       ></v-text-field>
     </v-card-text>
     <v-btn
       light
       class="blue darken-2 btn-remember"
-      @click.native="saveUserName"
+      @click.native="saveUser"
     >
       Remember me
     </v-btn>
@@ -28,15 +35,22 @@
 </template>
 
 <script>
+import uuid from 'uuid/v4';
+
 export default {
-  name: 'login-form',
+  name: 'registration-form',
   data: () => ({
     name: '',
+    email: '',
+    password: '',
   }),
   methods: {
-    saveUserName() {
+    saveUser() {
+      debugger;
       const userName = this.name.trim();
-      this.$store.commit('saveUserName', { userName });
+      const email = this.email.trim();
+      const uid = uuid();
+      this.$store.commit('saveUser', { userName, email, uid });
     },
   },
 };

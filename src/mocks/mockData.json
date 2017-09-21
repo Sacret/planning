@@ -1,0 +1,29 @@
+{
+  "plannings": {
+    "-KncKYHpoRZh4L8K5Xyf": {
+      "tasks": {
+        "-KncLoPuXEAx_AkBCqok": {
+          "description": "thjjjjjjjjjtr",
+          "status": 2
+        }
+      },
+      "title": "geshrher",
+      "uid": "J1EWZY5b4AgszsegbfisJFXJ3Yp2",
+      "users": {
+        "-KncKYHwqgULFgmIhegL": {
+          "uid": "J1EWZY5b4AgszsegbfisJFXJ3Yp2",
+          "userName": "Anastasia"
+        },
+        "-KncKxP1YTIEu8dAwiQL": {
+          "uid": "K2a7Aat5MgbHEt1F5V08eICnH552",
+          "userName": "John"
+        }
+      }
+    }
+  },
+  "user": {
+    "uid": "J1EWZY5b4AgszsegbfisJFXJ3Yp2",
+    "userName": "Anastasia",
+    "email": "a.abakumova@rambler.ru"
+  }
+}

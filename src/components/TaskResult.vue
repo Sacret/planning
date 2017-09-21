@@ -24,13 +24,13 @@
 </template>
 
 <script>
+import { plannings } from '@/mocks/mockData.json';
 import _get from 'lodash/get';
 import _map from 'lodash/map';
 import _union from 'lodash/union';
 import _forEach from 'lodash/forEach';
 import _reduce from 'lodash/reduce';
 import _sortBy from 'lodash/sortBy';
-import db from '../firebase';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -50,18 +50,21 @@ export default {
       const description = _get(this, 'tasks[0].description', '');
       return description;
     },
+    plannings() {
+      return plannings;
+    },
   },
-  beforeCreate() {
+  // beforeCreate() {
+  created() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1), null, () => {
-        const taskKey = _get(this.tasks, ['0', '.key'], '');
-        this.$bindAsArray(
-          'estimations',
-          db.ref(`plannings/${planningId}/tasks/${taskKey}/estimations`),
-          null,
-          this.updateData);
-      });
+      this.tasks = this.plannings[planningId].tasks;
+      // const taskKey = _get(this.tasks, ['0', '.key'], '');
+      // this.$bindAsArray(
+      //   'estimations',
+      //   db.ref(`plannings/${planningId}/tasks/${taskKey}/estimations`),
+      //   null,
+      //   this.updateData);
     }
   },
   methods: {

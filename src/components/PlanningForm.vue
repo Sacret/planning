@@ -1,6 +1,6 @@
 <template>
   <v-card class="planning-card">
-    <v-toolbar class="orange" light>
+    <v-toolbar class="blue darken-2" light>
       <v-toolbar-title>Hi, {{ userName }}! Let's create new planning:</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
@@ -15,7 +15,7 @@
       <v-btn
         v-if="!planningKey"
         light
-        class="orange btn-create"
+        class="blue darken-2 btn-create"
         @click.native="createPlanning"
       >
         Create planning
@@ -34,7 +34,7 @@
       <v-btn
         v-if="planningKey"
         light
-        class="orange btn-create"
+        class="blue darken-2 btn-create"
         router
         :to="'/plannings/' + planningKey"
       >
@@ -54,7 +54,9 @@
 </template>
 
 <script>
-import db from '../firebase';
+import { plannings } from '@/mocks/mockData.json';
+import _remove from 'lodash/remove';
+// import uuid from 'uuid/v4';
 
 export default {
   name: 'planning-form',
@@ -69,26 +71,27 @@ export default {
     planningLink() {
       return `${window.location.href}plannings/${this.planningKey}`;
     },
-  },
-  firebase: {
-    plannings: {
-      source: db.ref('plannings'),
+    plannings() {
+      return plannings;
     },
   },
   methods: {
     createPlanning() {
-      const newPlanning = this.$firebaseRefs.plannings.push({
+      // const planningKey = uuid();
+      const newPlanning = {
         title: this.title,
         uid: this.$store.state.uid,
-      });
-      this.planningKey = newPlanning.getKey();
-      this.$firebaseRefs.plannings.child(this.planningKey).child('users').push({
+        planningKey: '-KncKYHpoRZh4L8K5Xyf',
+      };
+      // this.plannings.push(newPlanning);
+      this.planningKey = newPlanning.planningKey;
+      this.plannings[this.planningKey].users['-KncKYHwqeULFgsIhegL'] = {
         uid: this.$store.state.uid,
         userName: this.userName,
-      });
+      };
     },
     resetPlanning() {
-      this.$firebaseRefs.plannings.child(this.planningKey).remove();
+      _remove(this.plannings, (planning, key) => key === this.planningKey);
       this.planningKey = '';
     },
   },
