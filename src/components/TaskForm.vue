@@ -47,7 +47,7 @@
 
 <script>
 import { plannings } from '@/mocks/mockData.json';
-import _get from 'lodash/get';
+// import _get from 'lodash/get';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -56,15 +56,16 @@ export default {
   data: () => ({
     taskStatuses,
     isTaskIncorrect: false,
+    currentTask: {},
     taskDescription: '',
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, `tasks[${this.taskKey}].status`, taskStatuses.INITIAL_STATUS);
+      const status = this.$store.state.currentTask.status || this.currentTask.status;
       return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     currentTaskDescription() {
-      const description = _get(this, `tasks[${this.taskKey}].description`, '');
+      const description = this.$store.state.currentTask.description || this.currentTask.description;
       return this.currentTaskStatus === taskStatuses.INITIAL_STATUS ? '' : description;
     },
     plannings() {
@@ -76,7 +77,9 @@ export default {
     const planningId = this.$route.params.id;
     if (planningId) {
       this.tasks = this.plannings[planningId].tasks;
-      this.taskKey = _get(this.tasks, ['0', '.key'], '-KncLoPuXEAx_AkBCqok');
+      this.taskKey = '-KncLoPuXEAx_AkBCqok';
+      this.currentTask = this.tasks[this.taskKey];
+      this.$store.commit('saveCurrentTask', { currentTask: this.currentTask });
     }
   },
   methods: {
@@ -86,10 +89,12 @@ export default {
         const newTask = {
           description: this.taskDescription.trim(),
           status: taskStatuses.START_DISCUSSION,
-          taskKey: '-KrcLoPiXEAx_AkBCqok',
+          taskKey: '-KncLoPuXEAx_AkBCqok',
         };
         this.tasks[newTask.taskKey] = newTask;
         this.taskKey = newTask.taskKey;
+        this.currentTask = newTask;
+        this.$store.commit('saveCurrentTask', { currentTask: this.currentTask });
       }
     },
     startEstimation() {

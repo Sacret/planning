@@ -1,6 +1,6 @@
 <template>
-  <v-container v-if="currentTaskStatus === taskStatuses.END_ESTIMATION">
-    <h6>Estimation for "{{ description }}"</h6>
+  <v-container>
+    <h6>Estimation for "{{ planningTitle }}"</h6>
     <v-layout row wrap>
       <v-flex xs12>
         <v-data-table
@@ -25,13 +25,12 @@
 
 <script>
 import { plannings } from '@/mocks/mockData.json';
-import _get from 'lodash/get';
 import _map from 'lodash/map';
 import _union from 'lodash/union';
 import _forEach from 'lodash/forEach';
 import _reduce from 'lodash/reduce';
 import _sortBy from 'lodash/sortBy';
-import taskStatuses from '../constants/taskStatuses';
+import taskStatuses from '@/constants/taskStatuses';
 
 export default {
   name: 'task-result',
@@ -39,38 +38,27 @@ export default {
     taskStatuses,
     headers: [],
     items: [],
-    description: '',
   }),
   computed: {
-    currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
-      return status;
-    },
-    currentTaskDescription() {
-      const description = _get(this, 'tasks[0].description', '');
-      return description;
-    },
     plannings() {
       return plannings;
+    },
+    planningTitle() {
+      return this.$store.state.planningTitle || 'pokerplanning.online';
     },
   },
   // beforeCreate() {
   created() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      this.tasks = this.plannings[planningId].tasks;
-      // const taskKey = _get(this.tasks, ['0', '.key'], '');
-      // this.$bindAsArray(
-      //   'estimations',
-      //   db.ref(`plannings/${planningId}/tasks/${taskKey}/estimations`),
-      //   null,
-      //   this.updateData);
+      this.currentPlanning = this.plannings[planningId];
+      this.tasks = this.currentPlanning.tasks;
+      this.estimations = this.plannings[planningId].estimations;
+      this.updateData();
     }
   },
   methods: {
     updateData() {
-      this.averageEstimation = this.getAverageEstimation();
-      this.medianEstimation = this.getMedianEstimation();
       this.headers = this.getHeaders();
       this.items = this.getItems();
     },
@@ -79,19 +67,19 @@ export default {
       const mins = time % 60;
       return (hours ? `${hours}h ` : '') + (mins ? `${mins}m` : '');
     },
-    getAverageEstimation() {
-      const estimationsLength = this.estimations.length;
+    getAverageEstimation(estimations) {
+      const estimationsLength = estimations.length;
       if (!estimationsLength) return 0;
       return _reduce(
-        this.estimations,
+        estimations,
         (result, estimation) => result + estimation.time,
         0,
       ) / estimationsLength;
     },
-    getMedianEstimation() {
-      const estimationsLength = this.estimations.length;
+    getMedianEstimation(estimations) {
+      const estimationsLength = estimations.length;
       if (!estimationsLength) return 0;
-      const sortedEstimations = _sortBy(this.estimations, [o => o.time]);
+      const sortedEstimations = _sortBy(estimations, [o => o.time]);
       const isOdd = estimationsLength % 2;
       return isOdd
         ? sortedEstimations[Math.ceil(estimationsLength / 2)].time
@@ -101,40 +89,42 @@ export default {
         ) / 2;
     },
     getHeaders() {
-      const userNames = _map(this.estimations, estimation => ({
-        text: estimation.userName,
-        value: estimation.uid,
+      const description = {
+        text: 'Description',
+        value: 'description',
+        sortable: true,
+      };
+      const userNames = _map(this.currentPlanning.users, user => ({
+        text: user.userName,
+        value: user.uid,
         sortable: false,
       }));
-      const recommendedTimes = [];
-      if (this.averageEstimation) {
-        recommendedTimes.push({
-          text: 'Average time',
-          value: 'average',
-          sortable: false,
-        });
-      }
-      if (this.medianEstimation) {
-        recommendedTimes.push({
-          text: 'Median time',
-          value: 'median',
-          sortable: false,
-        });
-      }
-      return _union(userNames, recommendedTimes);
+      const recommendedTimes = [{
+        text: 'Average time',
+        value: 'average',
+        sortable: true,
+      }, {
+        text: 'Median time',
+        value: 'median',
+        sortable: true,
+      }];
+      return _union([description], userNames, recommendedTimes);
     },
     getItems() {
-      const item = {};
-      _forEach(this.estimations, (estimation) => {
-        item[estimation.uid] = this.formatTime(estimation.time);
+      const items = [];
+      _forEach(this.tasks, (task) => {
+        const item = {};
+
+        item.description = task.description;
+        _forEach(task.estimations, (estimation) => {
+          item[estimation.uid] = this.formatTime(estimation.time);
+        });
+        item.average = this.formatTime(this.getAverageEstimation(task.estimations));
+        item.median = this.formatTime(this.getMedianEstimation(task.estimations));
+
+        items.push(item);
       });
-      if (this.averageEstimation) {
-        item.average = this.formatTime(this.averageEstimation);
-      }
-      if (this.medianEstimation) {
-        item.median = this.formatTime(this.medianEstimation);
-      }
-      return [item];
+      return items;
     },
   },
 };

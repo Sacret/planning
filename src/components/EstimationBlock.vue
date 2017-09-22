@@ -56,7 +56,7 @@ export default {
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      const status = this.$store.state.currentTask.status || this.currentTask.status;
       return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     currentUid() {
@@ -89,7 +89,8 @@ export default {
     const planningId = this.$route.params.id;
     if (planningId) {
       this.tasks = this.plannings[planningId].tasks;
-      this.taskKey = _get(this.tasks, ['0', '.key'], '');
+      this.taskKey = '-KncLoPuXEAx_AkBCqok';
+      this.currentTask = this.tasks[this.taskKey];
     }
   },
   methods: {

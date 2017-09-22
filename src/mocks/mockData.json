@@ -2,9 +2,49 @@
   "plannings": {
     "-KncKYHpoRZh4L8K5Xyf": {
       "tasks": {
+        "-KncLoPuXEAx_AkBCqyk": {
+          "description": "N1",
+          "status": 0,
+          "estimations": [{
+              "uid": "J1EWZY5b4AgszsegbfisJFXJ3Yp2",
+              "userName": "Anastasia",
+              "time": 60
+            }, {
+              "uid": "K2a7Aat5MgbHEt1F5V08eICnH552",
+              "userName": "John",
+              "time": 80
+            }, {
+              "uid": "K2a7Aat5Mgfsfdut1F5V08eICnH552",
+              "userName": "Anna",
+              "time": 120
+            }, {
+              "uid": "KdsyAat5Mgfsfdut1F5V08eICnH552",
+              "userName": "Chris",
+              "time": 70
+            }
+          ]
+        },
         "-KncLoPuXEAx_AkBCqok": {
-          "description": "thjjjjjjjjjtr",
-          "status": 2
+          "description": "N2",
+          "status": 0,
+          "estimations": [{
+              "uid": "J1EWZY5b4AgszsegbfisJFXJ3Yp2",
+              "userName": "Anastasia",
+              "time": 20
+            }, {
+              "uid": "K2a7Aat5MgbHEt1F5V08eICnH552",
+              "userName": "John",
+              "time": 30
+            }, {
+              "uid": "K2a7Aat5Mgfsfdut1F5V08eICnH552",
+              "userName": "Anna",
+              "time": 20
+            }, {
+              "uid": "KdsyAat5Mgfsfdut1F5V08eICnH552",
+              "userName": "Chris",
+              "time": 40
+            }
+          ]
         }
       },
       "title": "geshrher",
@@ -17,6 +57,14 @@
         "-KncKxP1YTIEu8dAwiQL": {
           "uid": "K2a7Aat5MgbHEt1F5V08eICnH552",
           "userName": "John"
+        },
+        "-KncKxP1YTfds8dAwiQL": {
+          "uid": "K2a7Aat5Mgfsfdut1F5V08eICnH552",
+          "userName": "Anna"
+        },
+        "-KncKxP1YTfds8gfdiQL": {
+          "uid": "KdsyAat5Mgfsfdut1F5V08eICnH552",
+          "userName": "Chris"
         }
       }
     }

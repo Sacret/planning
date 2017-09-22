@@ -9,6 +9,7 @@ const state = {
   userName: '',
   uid: null,
   planningTitle: '',
+  currentTask: {},
 };
 
 // mutations are operations that actually mutates the state.
@@ -31,6 +32,9 @@ const mutations = {
   },
   savePlanningTitle(newState, { planningTitle }) {
     newState.planningTitle = planningTitle;
+  },
+  saveCurrentTask(newState, { currentTask }) {
+    newState.currentTask = currentTask;
   },
 };
 

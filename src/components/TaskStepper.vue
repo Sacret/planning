@@ -18,7 +18,7 @@
 
 <script>
 import { plannings } from '@/mocks/mockData.json';
-import _get from 'lodash/get';
+// import _get from 'lodash/get';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -28,7 +28,7 @@ export default {
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, `tasks[${this.taskKey}].status`, taskStatuses.INITIAL_STATUS);
+      const status = this.$store.state.currentTask.status || this.currentTask.status;
       return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     plannings() {
@@ -40,7 +40,8 @@ export default {
     const planningId = this.$route.params.id;
     if (planningId) {
       this.tasks = this.plannings[planningId].tasks;
-      this.taskKey = _get(this.tasks, ['0', '.key'], '-KncLoPuXEAx_AkBCqok');
+      this.taskKey = '-KncLoPuXEAx_AkBCqok';
+      this.currentTask = this.tasks[this.taskKey];
     }
   },
 };
