@@ -93,6 +93,7 @@ export default {
     resetPlanning() {
       _remove(this.plannings, (planning, key) => key === this.planningKey);
       this.planningKey = '';
+      this.title = '';
     },
   },
 };

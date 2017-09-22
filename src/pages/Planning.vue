@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <template>
+      <template v-if="uid && userName && users">
         <template v-for="(user, key) in users">
           <v-flex xs2 v-if="user.uid">
             <User :userName="user.userName" :uid="user.uid" :userKey="key" :isOwner="isOwner"></User>
@@ -12,7 +12,7 @@
         <TaskForm :isOwner="isOwner"></TaskForm>
         <TaskStepper></TaskStepper>
       </template>
-      <template>
+      <template v-else>
         <v-flex xs12 justify-center>If you want to join this planning please log in!</v-flex>
         <v-flex xs12 md4 offset-md4>
           <LoginForm></LoginForm>
@@ -68,15 +68,20 @@ export default {
   // beforeCreate() {
   created() {
     if (user) {
-      this.$store.commit('saveUserId', { uid: user.uid });
-      const planningId = this.$route.params.id;
-      if (planningId) {
-        this.planning = this.plannings[planningId];
-        this.isOwner = user.uid === this.planning.uid;
-        this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
+      if (!this.$route.query.user) {
+        this.$store.commit('saveUserId', { uid: user.uid });
+        this.$store.commit('saveUserName', { userName: user.userName });
+        const planningId = this.$route.params.id;
+        if (planningId) {
+          this.planning = this.plannings[planningId];
+          this.isOwner = user.uid === this.planning.uid;
+          this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
 
-        this.users = this.planning.users;
-        this.checkUid();
+          this.users = this.planning.users;
+          this.checkUid();
+        }
+      } else {
+        this.user = {};
       }
     }
   },
