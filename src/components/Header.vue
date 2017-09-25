@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar class="orange" light>
+  <v-toolbar class="grey darken-3" light>
     <v-toolbar-title class="text-xs-left">{{ planningTitle }}</v-toolbar-title>
     <v-toolbar-items>
       <v-menu left bottom origin="bottom right" transition="v-scale-transition">
@@ -31,7 +31,19 @@
           <v-icon light>star</v-icon>
         </a>
       </v-toolbar-item>
-      <v-toolbar-item ripple v-if="userName">{{ userName }}</v-toolbar-item>
+      <v-toolbar-item ripple v-if="userName">
+        <v-btn
+          flat
+          light
+          router
+          :to="'/user'"
+        >
+          {{ userName }}
+          <v-avatar class="avatar">
+            <img :src="'https://api.adorable.io/avatars/150/' + uid + '.png'" />
+          </v-avatar>
+        </v-btn>
+      </v-toolbar-item>
       <v-menu left bottom origin="bottom right" transition="v-scale-transition" v-if="userName">
         <v-btn light icon slot="activator">
           <v-icon>more_vert</v-icon>
@@ -49,6 +61,8 @@
 </template>
 
 <script>
+import { user } from '@/mocks/mockData.json';
+
 export default {
   name: 'header',
   data: () => ({
@@ -59,8 +73,11 @@ export default {
     userName() {
       return this.$store.state.userName;
     },
+    uid() {
+      return user.uid;
+    },
     planningTitle() {
-      return this.$store.state.planningTitle;
+      return this.$store.state.planningTitle || 'pokerplanning.online';
     },
   },
 };
@@ -70,5 +87,14 @@ export default {
 <style scoped>
 .star-icon {
   text-decoration: none;
+}
+
+.avatar {
+  margin-left: 5px;
+}
+
+.avatar img {
+  height: 30px;
+  width: 30px;
 }
 </style>

@@ -13,7 +13,7 @@
       <v-flex xs2 v-if="isOwner">
         <v-btn
           :light="currentTaskStatus == taskStatuses.INITIAL_STATUS"
-          class="orange task-button"
+          class="blue darken-2 task-button"
           :disabled="currentTaskStatus !== taskStatuses.INITIAL_STATUS"
           @click.native="startDiscussion"
         >
@@ -21,7 +21,7 @@
         </v-btn>
         <v-btn
           :light="currentTaskStatus == taskStatuses.START_DISCUSSION"
-          class="orange task-button"
+          class="blue darken-2 task-button"
           :disabled="currentTaskStatus !== taskStatuses.START_DISCUSSION"
           @click.native="startEstimation"
         >
@@ -29,7 +29,7 @@
         </v-btn>
         <v-btn
           :light="currentTaskStatus == taskStatuses.START_ESTIMATION"
-          class="orange task-button"
+          class="blue darken-2 task-button"
           :disabled="currentTaskStatus !== taskStatuses.START_ESTIMATION"
           @click.native="endEstimation"
         >
@@ -46,8 +46,8 @@
 </template>
 
 <script>
+import { plannings } from '@/mocks/mockData.json';
 import _get from 'lodash/get';
-import db from '../firebase';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -60,38 +60,43 @@ export default {
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      const status = _get(this, `tasks[${this.taskKey}].status`, taskStatuses.INITIAL_STATUS);
       return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
     currentTaskDescription() {
-      const description = _get(this, 'tasks[0].description', '');
+      const description = _get(this, `tasks[${this.taskKey}].description`, '');
       return this.currentTaskStatus === taskStatuses.INITIAL_STATUS ? '' : description;
     },
+    plannings() {
+      return plannings;
+    },
   },
-  beforeCreate() {
+  // beforeCreate() {
+  created() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1), null, () => {
-        this.taskKey = _get(this.tasks, ['0', '.key'], '');
-      });
+      this.tasks = this.plannings[planningId].tasks;
+      this.taskKey = _get(this.tasks, ['0', '.key'], '-KncLoPuXEAx_AkBCqok');
     }
   },
   methods: {
     startDiscussion() {
       this.isTaskIncorrect = !this.taskDescription.trim().length;
       if (!this.isTaskIncorrect) {
-        const newTask = this.$firebaseRefs.tasks.push({
+        const newTask = {
           description: this.taskDescription.trim(),
           status: taskStatuses.START_DISCUSSION,
-        });
-        this.taskKey = newTask.getKey();
+          taskKey: '-KrcLoPiXEAx_AkBCqok',
+        };
+        this.tasks[newTask.taskKey] = newTask;
+        this.taskKey = newTask.taskKey;
       }
     },
     startEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(taskStatuses.START_ESTIMATION);
+      this.tasks[this.taskKey].status = taskStatuses.START_ESTIMATION;
     },
     endEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('status').set(taskStatuses.END_ESTIMATION);
+      this.tasks[this.taskKey].status = taskStatuses.END_ESTIMATION;
       this.taskDescription = '';
     },
   },

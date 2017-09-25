@@ -6,7 +6,7 @@ Vue.use(Vuex);
 // root state object.
 // each Vuex instance is just a single state tree.
 const state = {
-  userName: localStorage.getItem('userName') || '',
+  userName: '',
   uid: null,
   planningTitle: '',
 };
@@ -18,8 +18,12 @@ const state = {
 // for debugging purposes.
 const mutations = {
   /* eslint-disable no-param-reassign */
+  saveUser(newState, { userName, email, uid }) {
+    newState.userName = userName;
+    newState.email = email;
+    newState.uid = uid;
+  },
   saveUserName(newState, { userName }) {
-    localStorage.setItem('userName', userName);
     newState.userName = userName;
   },
   saveUserId(newState, { uid }) {

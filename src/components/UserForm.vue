@@ -1,9 +1,18 @@
 <template>
   <v-card class="user-card">
-    <v-toolbar class="grey darken-3" light>
-      <v-toolbar-title>Hello, friend!</v-toolbar-title>
+    <v-toolbar class="blue darken-2" light>
+      <v-toolbar-title>You can edit your user info:</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
+      <img :src="'https://api.adorable.io/avatars/100/' + uid + '.png'" />
+    </v-card-text>
+    <v-card-text>
+      <v-text-field
+        v-model="name"
+        label="Your name"
+        maxlength="50"
+        required
+      ></v-text-field>
       <v-text-field
         v-model="email"
         label="E-mail"
@@ -22,17 +31,26 @@
       class="blue darken-2 btn-remember"
       @click.native="saveUserName"
     >
-      Remember me
+      Save changes
     </v-btn>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: 'login-form',
-  data: () => ({
-    name: '',
-  }),
+  name: 'user-form',
+  props: ['user'],
+  computed: {
+    name() {
+      return this.user.userName;
+    },
+    uid() {
+      return this.user.uid;
+    },
+    email() {
+      return this.user.email;
+    },
+  },
   methods: {
     saveUserName() {
       const userName = this.name.trim();

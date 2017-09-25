@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Firebase from 'firebase';
+import { user, plannings } from '@/mocks/mockData.json';
 import _find from 'lodash/find';
 import User from '@/components/User';
 import EstimationBlock from '@/components/EstimationBlock';
@@ -31,7 +31,6 @@ import LoginForm from '@/components/LoginForm';
 import TaskResult from '@/components/TaskResult';
 import TaskForm from '@/components/TaskForm';
 import TaskStepper from '@/components/TaskStepper';
-import db from '../firebase';
 
 export default {
   name: 'planning',
@@ -46,6 +45,9 @@ export default {
     uid() {
       return this.$store.state.uid;
     },
+    plannings() {
+      return plannings;
+    },
   },
   watch: {
     userName() {
@@ -56,32 +58,32 @@ export default {
     checkUid() {
       const isUserInArray = _find(this.users, { uid: this.uid });
       if (this.userName && !isUserInArray) {
-        this.$firebaseRefs.users.push({
+        this.users.push({
           uid: this.uid,
           userName: this.userName,
         });
       }
     },
   },
-  beforeCreate() {
-    // Setup Firebase onAuthStateChanged handler
-    Firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
+  // beforeCreate() {
+  created() {
+    if (user) {
+      if (!this.$route.query.user) {
         this.$store.commit('saveUserId', { uid: user.uid });
+        this.$store.commit('saveUserName', { userName: user.userName });
         const planningId = this.$route.params.id;
         if (planningId) {
-          this.$bindAsObject('planning', db.ref(`plannings/${planningId}`), null, () => {
-            this.isOwner = user.uid === this.planning.uid;
-            this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
-          });
-          this.$bindAsObject('users', db.ref(`plannings/${planningId}/users`), null, () => {
-            this.checkUid();
-          });
+          this.planning = this.plannings[planningId];
+          this.isOwner = user.uid === this.planning.uid;
+          this.$store.commit('savePlanningTitle', { planningTitle: this.planning.title });
+
+          this.users = this.planning.users;
+          this.checkUid();
         }
       } else {
-        Firebase.auth().signInAnonymously().catch(console.error);
+        this.user = {};
       }
-    });
+    }
   },
 };
 </script>

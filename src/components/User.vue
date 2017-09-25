@@ -8,7 +8,7 @@
       <v-btn
         icon
         light
-        class="orange remove-button"
+        class="blue darken-2 remove-button"
         v-if="hasRemoveIcon"
         @click.native="removeUser"
       >
@@ -22,13 +22,14 @@
             <v-list-tile-title>{{ userName }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-      </v-list-item>    
+      </v-list-item>
     </v-list>
   </v-card>
 </template>
 
 <script>
-import db from '../firebase';
+import { plannings } from '@/mocks/mockData.json';
+import _remove from 'lodash/remove';
 
 export default {
   name: 'user',
@@ -40,18 +41,22 @@ export default {
     hasRemoveIcon() {
       return this.isOwner && this.uid !== this.currentUid;
     },
+    plannings() {
+      return plannings;
+    },
   },
   methods: {
     removeUser() {
       if (this.isOwner) {
-        this.$firebaseRefs.user.remove();
+        _remove(this.plannings[this.planningId].users, (user, key) => key === this.userKey);
       }
     },
   },
   created() {
     const planningId = this.$route.params.id;
+    this.planningId = planningId;
     if (planningId) {
-      this.$bindAsObject('user', db.ref(`plannings/${planningId}/users/${this.userKey}`));
+      this.user = this.plannings[planningId].users[this.userKey];
     }
   },
 };

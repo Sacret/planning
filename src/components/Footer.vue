@@ -1,7 +1,7 @@
 <template>
   <v-footer>
     <v-spacer></v-spacer>
-    <div>© {{author}} {{ new Date().getFullYear() }}</div>
+    <div>© {{ new Date().getFullYear() }}</div>
   </v-footer>
 </template>
 

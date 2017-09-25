@@ -17,8 +17,8 @@
 </template>
 
 <script>
+import { plannings } from '@/mocks/mockData.json';
 import _get from 'lodash/get';
-import db from '../firebase';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -28,14 +28,19 @@ export default {
   }),
   computed: {
     currentTaskStatus() {
-      const status = _get(this, 'tasks[0].status', taskStatuses.INITIAL_STATUS);
+      const status = _get(this, `tasks[${this.taskKey}].status`, taskStatuses.INITIAL_STATUS);
       return status === taskStatuses.END_ESTIMATION ? taskStatuses.INITIAL_STATUS : status;
     },
+    plannings() {
+      return plannings;
+    },
   },
-  beforeCreate() {
+  // beforeCreate() {
+  created() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1));
+      this.tasks = this.plannings[planningId].tasks;
+      this.taskKey = _get(this.tasks, ['0', '.key'], '-KncLoPuXEAx_AkBCqok');
     }
   },
 };

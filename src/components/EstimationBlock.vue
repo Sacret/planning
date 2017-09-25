@@ -39,9 +39,9 @@
 </template>
 
 <script>
+import { plannings } from '@/mocks/mockData.json';
 import _get from 'lodash/get';
 import _some from 'lodash/some';
-import db from '../firebase';
 import taskStatuses from '../constants/taskStatuses';
 
 export default {
@@ -80,18 +80,21 @@ export default {
       const min = this.selectedMin ? parseInt(this.selectedMin, 10) : 0;
       return (hour * 60) + min;
     },
+    plannings() {
+      return plannings;
+    },
   },
-  beforeCreate() {
+  // beforeCreate() {
+  created() {
     const planningId = this.$route.params.id;
     if (planningId) {
-      this.$bindAsArray('tasks', db.ref(`plannings/${planningId}/tasks`).limitToLast(1), null, () => {
-        this.taskKey = _get(this.tasks, ['0', '.key'], '');
-      });
+      this.tasks = this.plannings[planningId].tasks;
+      this.taskKey = _get(this.tasks, ['0', '.key'], '');
     }
   },
   methods: {
     setEstimation() {
-      this.$firebaseRefs.tasks.child(this.taskKey).child('estimations').push({
+      this.tasks[this.taskKey].estimations.push({
         uid: this.uid,
         userName: this.userName,
         time: this.time,
