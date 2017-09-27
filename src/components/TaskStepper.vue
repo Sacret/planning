@@ -19,7 +19,7 @@
 <script>
 import { plannings } from '@/mocks/mockData.json';
 // import _get from 'lodash/get';
-import taskStatuses from '../constants/taskStatuses';
+import taskStatuses from '@/constants/taskStatuses';
 
 export default {
   name: 'task-stepper',

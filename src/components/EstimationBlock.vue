@@ -40,9 +40,8 @@
 
 <script>
 import { plannings } from '@/mocks/mockData.json';
-import _get from 'lodash/get';
 import _some from 'lodash/some';
-import taskStatuses from '../constants/taskStatuses';
+import taskStatuses from '@/constants/taskStatuses';
 
 export default {
   name: 'estimation-block',
@@ -71,7 +70,7 @@ export default {
         && this.currentTaskStatus === taskStatuses.START_ESTIMATION;
     },
     isUserEstimated() {
-      const estimations = _get(this.tasks, ['0', 'estimations'], []);
+      const estimations = this.tasks[this.taskKey].estimations || [];
       const estimated = _some(estimations, { uid: this.uid });
       return estimated && this.currentTaskStatus === taskStatuses.START_ESTIMATION;
     },
@@ -95,6 +94,9 @@ export default {
   },
   methods: {
     setEstimation() {
+      if (!this.tasks[this.taskKey].estimations) {
+        this.tasks[this.taskKey].estimations = [];
+      }
       this.tasks[this.taskKey].estimations.push({
         uid: this.uid,
         userName: this.userName,

@@ -8,9 +8,9 @@
             <EstimationBlock :userName="user.userName" :uid="user.uid"></EstimationBlock>
           </v-flex>
         </template>
-        <TaskResult></TaskResult>
         <TaskForm :isOwner="isOwner"></TaskForm>
         <TaskStepper></TaskStepper>
+        <TaskResult></TaskResult>
       </template>
       <template v-else>
         <v-flex xs12 justify-center>If you want to join this planning please log in!</v-flex>
